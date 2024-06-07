@@ -1,0 +1,25 @@
+survey:
+  title: "Přihlášení na Veřejnou Akci"
+  limit: 30
+  fields:
+    - name: "name"
+      label: "Jméno"
+      type: "text"
+      required: true
+    - name: "surname"
+      label: "Příjmení"
+      type: "text"
+      required: true
+    - name: "email"
+      label: "Email"
+      type: "email"
+      required: true
+    - name: "attending"
+      label: "Půjdete na akci?"
+      type: "select-one"
+      options: ["Ano", "Ne"]
+      required: true
+    - name: "question"
+      label: "Jaké máte očekávání od akce?"
+      type: "text"
+      required: false

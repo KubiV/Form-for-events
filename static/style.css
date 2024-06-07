@@ -1,0 +1,78 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.5em;
+    color: #333;
+}
+
+form {
+    max-width: 500px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    
+}
+
+.container {
+    text-align: center;
+    background-color: #fff;
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+input, select, textarea {
+    width: 90%;
+    padding: 10px;
+}
+
+label[for="csrf_token"] {
+    display: none;
+}
+
+
+/* Hide the default radio buttons */
+.radio input[type="radio"] {
+    display: none;
+}
+
+.radio li {
+    list-style: none;
+}
+
+/* Style for custom radio buttons */
+.radio label {
+    cursor: pointer;
+    position: relative;
+    padding-left: 25px; /* Adjust the space between the radio button and label */
+    font-size: 14px;
+}
+
+/* Style for custom radio buttons - circle */
+.radio label:before {
+    content: '';
+    display: inline-block;
+    width: 10px; /* Diameter of the circle */
+    height: 10px; /* Diameter of the circle */
+    border: 2px solid #000000; /* Border color */
+    border-radius: 50%; /* Make it a circle */
+    position: absolute;
+    left: 0;
+    top: 1px; /* Adjust the position of the circle */
+}
+
+/* Style for custom radio buttons - checked */
+.radio input[type="radio"]:checked + label:before {
+    background-color: #2196F3; /* Color when checked */
+    border-color: #2196F3; /* Border color when checked */
+}
+
