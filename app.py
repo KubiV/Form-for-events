@@ -2,10 +2,11 @@ import os
 from flask import Flask, render_template, redirect, url_for
 #from flask_bootstrap import Bootstrap
 import yaml
-from forms import create_form  # Importujte create_form z forms.py
+from forms import create_form
+import functions as fc
 import csv
-import random
-import string
+import gspread
+from google.oauth2.service_account import Credentials
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -18,25 +19,17 @@ with open('survey.yaml', 'r', encoding='utf-8') as f:
 # Creating DynamicForm from survey_data obtained from yaml
 DynamicForm = create_form(survey_data)
 
-# Function for checking registrations
-def get_registrations_count():
-    try:
-        with open('registrations.csv', mode='r', newline='', encoding='utf-8') as file:
-            reader = csv.reader(file)
-            next(reader, None)  # Přeskočení hlavičky
-            return sum(1 for row in reader)
-    except FileNotFoundError:
-        return 0
+# Load google sheet
+credentials_file = 'credentials.json'
+sheet_id = str(fc.extract_id("info.txt"))
 
-# Generates unique code for unregistering from the event
-def generate_unique_code(first, second):
-    # Get 3 first letters of the first and secornd part for the code
-    code_prefix = (first[:3] if len(first) >= 3 else first) + (second[:3] if len(second) >= 3 else second)
-    # Code suffix
-    code_suffix = ''.join(random.choices(string.digits, k=3))
+SCOPES = [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive'
+]
 
-    unique_code = code_prefix + code_suffix
-    return unique_code
+credentials = Credentials.from_service_account_file(credentials_file, scopes=SCOPES)
+gc = gspread.authorize(credentials)
 
 @app.route('/')
 def home():
@@ -45,7 +38,7 @@ def home():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     # Checking registrations
-    registrations = 29 #get_registrations_count()
+    registrations = 29 #fc.get_registrations_count_csv()
     if registrations >= survey_data['survey']['limit']:
         return render_template("limit.html", tittle="Dotazník uzavřen")
 
@@ -59,8 +52,23 @@ def register():
         # Generating the code
         first_item = list(form_data.values())[0]
         second_item = list(form_data.values())[1]
-        unique_code = generate_unique_code(first_item, second_item)
+        unique_code = fc.generate_unique_code(first_item, second_item)
 
+        spreadsheet = gc.open_by_url("https://docs.google.com/spreadsheets/d/"+ sheet_id +"/edit")
+        worksheet = spreadsheet.sheet1
+        all_values = worksheet.get_all_values()
+
+        header = ["Unique Code"] + [field['name'] for field in survey_data['survey']['fields']]
+        if len(all_values) == 0:
+            worksheet.append_row(header)
+        elif all_values[0] != header:
+            worksheet.insert_row(header, index=1)
+
+        # Prepare the row data and append it
+        row_data = [unique_code] + [form_data[field['name']] for field in survey_data['survey']['fields']]
+        worksheet.append_row(row_data)
+
+        """
         # Saving to CSV
         with open('registrations.csv', mode='a', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
@@ -71,8 +79,8 @@ def register():
             
             row_data = [unique_code] + [form_data[field['name']] for field in survey_data['survey']['fields']]
             writer.writerow(row_data)
-
-        return redirect(url_for('home'))
+        """
+        return render_template("sent.html", tittle="Úspěšně odesláno") # redirect(url_for('home'))
     
     return render_template('register.html', title=survey_data['survey']['title'], form=form)
 

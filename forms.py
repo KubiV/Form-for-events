@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField, RadioField
 from wtforms.validators import DataRequired, Email
+from markupsafe import Markup
 
 def create_form(survey_data):
     class DynamicForm(FlaskForm):
@@ -11,6 +12,9 @@ def create_form(survey_data):
         field_label = field['label']
         field_required = field['required']
         field_type = field['type']
+
+        if field_required:
+            field_label += Markup('<span style="color: red;">*</span>')
 
         if field_type == 'text':
             setattr(DynamicForm, field_name, StringField(field_label, validators=[DataRequired()] if field_required else []))
