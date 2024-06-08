@@ -7,6 +7,7 @@ import functions as fc
 import csv
 import gspread
 from google.oauth2.service_account import Credentials
+import datetime
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -37,8 +38,20 @@ def home():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    # Init Google sheet
+    spreadsheet = gc.open_by_url("https://docs.google.com/spreadsheets/d/"+ sheet_id +"/edit")
+    worksheet = spreadsheet.sheet1
+    all_values = worksheet.get_all_values()
+
+    header = ["time"] + ["uniq_code"] + [field['name'] for field in survey_data['survey']['fields']]
+    if len(all_values) == 0:
+        worksheet.append_row(header)
+    elif all_values[0] != header:
+        worksheet.insert_row(header, index=1)
+
     # Checking registrations
-    registrations = 29 #fc.get_registrations_count_csv()
+    registrations = len(worksheet.col_values(worksheet.find("uniq_code").col)) - 1 #fc.get_registrations_count_csv()
+    print(registrations)
     if registrations >= survey_data['survey']['limit']:
         return render_template("limit.html", tittle="Dotazník uzavřen")
 
@@ -49,23 +62,15 @@ def register():
         # Getting the data
         form_data = {field.name: field.data for field in form}
 
-        # Generating the code
+        # Generating the unique code and timestamp
         first_item = list(form_data.values())[0]
         second_item = list(form_data.values())[1]
         unique_code = fc.generate_unique_code(first_item, second_item)
-
-        spreadsheet = gc.open_by_url("https://docs.google.com/spreadsheets/d/"+ sheet_id +"/edit")
-        worksheet = spreadsheet.sheet1
-        all_values = worksheet.get_all_values()
-
-        header = ["Unique Code"] + [field['name'] for field in survey_data['survey']['fields']]
-        if len(all_values) == 0:
-            worksheet.append_row(header)
-        elif all_values[0] != header:
-            worksheet.insert_row(header, index=1)
+        current_time = datetime.datetime.now()
+        formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
 
         # Prepare the row data and append it
-        row_data = [unique_code] + [form_data[field['name']] for field in survey_data['survey']['fields']]
+        row_data = [formatted_time] + [unique_code] + [form_data[field['name']] for field in survey_data['survey']['fields']]
         worksheet.append_row(row_data)
 
         """
