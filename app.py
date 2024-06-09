@@ -8,7 +8,7 @@ import csv
 import gspread
 from google.oauth2.service_account import Credentials
 import datetime
-from info_sheet import id
+from setup import id, registration_list, unsubscribed_list
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -24,6 +24,8 @@ DynamicForm = create_form(survey_data)
 # Load google sheet
 credentials_file = 'credentials.json'
 sheet_id = id
+registation_sheet = registration_list
+unsubscribing_sheet = unsubscribed_list
 
 SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets',
@@ -41,7 +43,7 @@ def home():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    worksheet = spreadsheet.worksheet("List 1")
+    worksheet = spreadsheet.worksheet(registation_sheet)
     all_values = worksheet.get_all_values()
 
     header = ["time"] + ["uniq_code"] + [field['name'] for field in survey_data['survey']['fields']]
@@ -98,16 +100,11 @@ def register():
 def unsubscribe():
     unsubscribe_code = request.args.get('unique_code')
     
-    worksheet = spreadsheet.worksheet("List 1")
+    worksheet = spreadsheet.worksheet(registation_sheet)
     all_values = worksheet.get_all_values()
-    target_worksheet = spreadsheet.worksheet('List 2')
+    target_worksheet = spreadsheet.worksheet(unsubscribing_sheet)
 
-    found_data = None
-    for index, row in enumerate(all_values):
-        if unsubscribe_code in row:
-            found_data = index + 1  # Rows start from 1, not 0
-            break
-
+    found_data = fc.find_row(all_values, unsubscribe_code)
     if found_data is not None:
         current_time = datetime.datetime.now()
         formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')

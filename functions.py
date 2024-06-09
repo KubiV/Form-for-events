@@ -2,7 +2,7 @@ import csv
 import random
 import string
 import unicodedata
-from info_mail import smtp_server, smtp_port, smtp_password, sender_mail
+from setup import smtp_server, smtp_port, smtp_password, sender_mail
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -35,12 +35,21 @@ def replace_special_char(char):
     # Replace special characters with their regular counterparts
     return unicodedata.normalize('NFD', char).encode('ascii', 'ignore').decode('utf-8')
 
-# Extract id
+# Extract ID
 def extract_id(file_txt):
     with open(file_txt, 'r') as file:
         # Read the first line
         id = file.readline().strip()
         return id
+
+# Find Data/Row in Google Sheet
+def find_row(all_values, unsubscribe_code):
+    found_data = None
+    for index, row in enumerate(all_values):
+        if unsubscribe_code in row:
+            found_data = index + 1  # Rows start from 1, not 0
+            break
+    return found_data
 
 # Confiramtion email sending
 def send_confirmation_email(receiver_email, subject, code): 

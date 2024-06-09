@@ -2,13 +2,12 @@
 ## Setup
 Into the root directory add theese files containing:
 
-info_sheet.py - information for Google Sheet to be edited
+setup.py - information for Google Sheet to be edited and information for email sending
 ```
 id = "your_google_sheet_id" # dont forget to add API email as an editor to the sheet something@form-event.iam.gserviceaccount.com
-```
+registration_list = "List 1"
+unsubscribed_list = "List 2"
 
-info_mail.py - information for email sending
-```
 smtp_server = "smtp.serevr.com"
 smtp_port = 587
 smtp_password = "password"
