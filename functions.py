@@ -1,11 +1,18 @@
 import csv
 import random
 import string
+import datetime
 import unicodedata
 from setup import smtp_server, smtp_port, smtp_password, sender_mail
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+
+# Get Formatted Time
+def formatted_time():
+    current_time = datetime.datetime.now()
+    formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
+    return formatted_time
 
 # Function for checking registrations
 def get_registrations_count_csv():
@@ -50,6 +57,11 @@ def find_row(all_values, unsubscribe_code):
             found_data = index + 1  # Rows start from 1, not 0
             break
     return found_data
+
+def add_value_to_last_row(value, all_values, sheet):
+    last_filled_row = len(all_values)
+    next_column = len(all_values[0]) 
+    sheet.update_cell(last_filled_row, next_column, value)
 
 # Confiramtion email sending
 def send_confirmation_email(receiver_email, subject, code): 

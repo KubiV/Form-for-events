@@ -11,6 +11,10 @@ survey:
       label: "Příjmení"
       type: "text"
       required: true
+    - name: "age"
+      label: "Věk"
+      type: "text"
+      required: false
     - name: "email"
       label: "Email"
       type: "email"

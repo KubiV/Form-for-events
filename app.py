@@ -2,12 +2,11 @@ import os
 from flask import Flask, render_template, request, redirect, url_for
 #from flask_bootstrap import Bootstrap
 import yaml
-from forms import create_form
+from forms import create_form, handle_form_submission
 import functions as fc
 import csv
 import gspread
 from google.oauth2.service_account import Credentials
-import datetime
 from setup import id, registration_list, unsubscribed_list
 
 app = Flask(__name__)
@@ -62,17 +61,15 @@ def register():
     # Submitting the form
     if form.validate_on_submit():
         # Getting the data
-        form_data = {field.name: field.data for field in form}
+        form_data = handle_form_submission(form)
 
         # Generating the unique code and timestamp
         first_item = list(form_data.values())[0]
         second_item = list(form_data.values())[1]
         unique_code = fc.generate_unique_code(first_item, second_item)
-        current_time = datetime.datetime.now()
-        formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
 
         # Prepare the row data and append it
-        row_data = [formatted_time] + [unique_code] + [form_data[field['name']] for field in survey_data['survey']['fields']]
+        row_data = [fc.formatted_time()] + [unique_code] + [form_data[field['name']] for field in survey_data['survey']['fields']] + ["_"]
         worksheet.append_row(row_data)
 
         # Send confirmation email
@@ -106,12 +103,10 @@ def unsubscribe():
 
     found_data = fc.find_row(all_values, unsubscribe_code)
     if found_data is not None:
-        current_time = datetime.datetime.now()
-        formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
-
         row_data = all_values[found_data - 1]
         target_worksheet.append_row(row_data)
         worksheet.delete_rows(found_data)
+        fc.add_value_to_last_row(fc.formatted_time(), target_worksheet.get_all_values(), target_worksheet)
 
         return render_template("unsubscribe_sent.html", tittle="Úspěšně odhlášeno")
 
