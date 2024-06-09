@@ -45,7 +45,7 @@ def register():
     worksheet = spreadsheet.worksheet(registation_sheet)
     all_values = worksheet.get_all_values()
 
-    header = ["time"] + ["uniq_code"] + [field['name'] for field in survey_data['survey']['fields']]
+    header = ["time"] + ["uniq_code"] + [field['name'] for field in survey_data['survey']['fields']] + ["_"]
     if len(all_values) == 0:
         worksheet.append_row(header)
     elif all_values[0] != header:
