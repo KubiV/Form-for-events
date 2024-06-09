@@ -2,6 +2,10 @@ import csv
 import random
 import string
 import unicodedata
+from info_mail import smtp_server, smtp_port, smtp_password, sender_mail
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 # Function for checking registrations
 def get_registrations_count_csv():
@@ -37,4 +41,44 @@ def extract_id(file_txt):
         # Read the first line
         id = file.readline().strip()
         return id
-    
+
+# Confiramtion email sending
+def send_confirmation_email(receiver_email, subject, code): 
+    smtp_server_fc = smtp_server  
+    smtp_port_fc = smtp_port
+    smtp_password_fc = smtp_password
+    sender_email_fc = sender_mail
+
+    # Set up the sender, receiver, subject, and body
+    with open("templates/mail.html", 'r') as file:
+        html_content = file.read()
+
+    email = sender_email_fc  # Replace with actual contact email
+    html_content = html_content.format(email=email, code=code)
+
+    # Create message container
+    msg = MIMEMultipart('alternative')
+    msg['From'] = sender_email_fc
+    msg['To'] = receiver_email
+    msg['Subject'] = subject
+
+    # Attach HTML content
+    msg.attach(MIMEText(html_content, 'html'))
+
+    # Initialize the server variable
+    server = None
+
+    try:
+        # Start the SMTP session
+        server = smtplib.SMTP(smtp_server_fc, smtp_port_fc)
+        server.starttls()  # Secure the connection
+        server.login(sender_mail, smtp_password_fc)
+        server.sendmail(sender_email_fc, receiver_email, msg.as_string())
+        print("Email sent successfully!")
+    except smtplib.SMTPAuthenticationError as e:
+        print(f"SMTP Authentication Error: {e}")
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        if server:
+            server.quit()

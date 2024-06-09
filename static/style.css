@@ -76,3 +76,27 @@ label[for="csrf_token"] {
     border-color: #2196F3; /* Border color when checked */
 }
 
+/* Style for home button */
+.gohome {
+    padding: 10px 20px;
+    font-size: auto;
+    color: black; 
+    text-decoration: none;
+    background-color: #ffffff;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+    border-radius: 8px;
+    transform: translateX(-50%);
+    position: relative;
+    left: 50%;
+    top: 50%;
+  }
+  
+  /* Hover efect */
+  .gohome:hover {
+    background-color: #ffffff50; 
+  }
+  

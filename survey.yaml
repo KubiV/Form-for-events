@@ -1,6 +1,7 @@
 survey:
   title: "Přihlášení na Veřejnou Akci"
   limit: 30
+  email: False
   fields:
     - name: "name"
       label: "Jméno"
