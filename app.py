@@ -21,7 +21,7 @@ with open('survey.yaml', 'r', encoding='utf-8') as f:
 DynamicForm = create_form(survey_data)
 
 # Load google sheet
-credentials_file = 'credentials.json'
+credentials_file = '.credentials.json'
 sheet_id = id
 registation_sheet = registration_list
 unsubscribing_sheet = unsubscribed_list
@@ -85,18 +85,18 @@ def register():
             if file.tell() == 0:
                 header = ["Unique Code"] + [field['name'] for field in survey_data['survey']['fields']]
                 writer.writerow(header)
-            
+
             row_data = [unique_code] + [form_data[field['name']] for field in survey_data['survey']['fields']]
             writer.writerow(row_data)
         """
         return render_template("registration_sent.html", tittle="Úspěšně odesláno", unique_code=unique_code) # redirect(url_for('home'))
-    
+
     return render_template('register.html', title=survey_data['survey']['title'], form=form)
 
 @app.route('/unsubscribe', methods=['GET'])
 def unsubscribe():
     unsubscribe_code = request.args.get('unique_code')
-    
+
     worksheet = spreadsheet.worksheet(registation_sheet)
     all_values = worksheet.get_all_values()
     target_worksheet = spreadsheet.worksheet(unsubscribing_sheet)
@@ -116,4 +116,4 @@ if __name__ == '__main__':
     # Retrieve the port from the environment variable, defaulting to 4000 if not set
     port = int(os.environ.get("PORT", 4000))
     # Run the Flask app, binding to '0.0.0.0' for external access
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=port) #debug=True

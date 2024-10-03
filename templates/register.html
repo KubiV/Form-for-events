@@ -1,24 +1,24 @@
 {% extends "base.html" %}
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
-    <h1>{{ title }}</h1>
-    <form method="POST" action="{{ url_for('register') }}">
-        {{ form.hidden_tag() }}
-        {% for field in form %}
-            <p>
-                {{ field.label }}
-                {{ field(size=32) }}
-                {% if field.errors %}
-                    <ul>
-                    {% for error in field.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                    </ul>
-                {% endif %}
-            </p>
-            <br>
-        {% endfor %}
-    </form>
-    <br>
-    <div class="gohome"><a href="{{ url_for('home') }}">Domů</a></div>
+<h1>{{ title }}</h1>
+<form method="POST" action="{{ url_for('register') }}">
+    {{ form.hidden_tag() }}
+    {% for field in form %}
+        <p>
+            {{ field.label }}
+            {{ field(size=32) }}
+            {% if field.errors %}
+                <ul>
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        </p>
+        <br>
+    {% endfor %}
+</form>
+<br>
+<div class="gohome"><a href="{{ url_for('home') }}">Domů</a></div>
 {% endblock %}

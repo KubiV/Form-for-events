@@ -1,11 +1,9 @@
 {% extends "base.html" %}
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
-<div class="container">
 <h1>Vítejte na stránce pro přihlášení na akci</h1>
-<p>
-    <a href="{{ url_for('register') }}">Přihlásit se na akci</a><br>
-    <a href="{{ url_for('unsubscribe') }}">Odhlásit se z akce</a>
-</p>
-</div>
+<div class="gohome"><a href="{{ url_for('register') }}">Přihlásit se na akci</a></div>
+<br>
+<br>
+<div class="gohome"><a href="{{ url_for('unsubscribe') }}">Odhlásit se z akce</a></div>
 {% endblock %}

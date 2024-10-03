@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
-    <div class="container">
-        <h1>Formulář byl úspěšně odeslán</h1>
-        <p>Děkujeme za váš zájem.</p>
-        <p>Váš kód pro odhlášení z akce je: <strong>{{ unique_code }}</strong></p>
-    </div>
-    <br>
-    <div class="gohome"><a href="{{ url_for('home') }}">Domů</a></div>
+<h1>Formulář byl úspěšně odeslán</h1>
+<div class="form">
+    <p>Děkujeme za váš zájem. Zkontrolujte SPAM pro email s potvrzením.</p>
+    <p>Váš kód pro odhlášení z akce je: <strong>{{ unique_code }}</strong></p>
+</div>
+<br>
+<div class="gohome"><a href="{{ url_for('home') }}">Domů</a></div>
 {% endblock %}
