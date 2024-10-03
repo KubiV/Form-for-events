@@ -21,7 +21,7 @@ with open('survey.yaml', 'r', encoding='utf-8') as f:
 DynamicForm = create_form(survey_data)
 
 # Load google sheet
-credentials_file = '.credentials.json'
+credentials_file = 'credentials.json'
 sheet_id = id
 registation_sheet = registration_list
 unsubscribing_sheet = unsubscribed_list
